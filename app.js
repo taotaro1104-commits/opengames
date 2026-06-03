@@ -186,10 +186,43 @@ function imageSrc(url) {
     return "";
   }
   if (url.startsWith("assets/reference/")) {
-    const version = encodeURIComponent(data.generated_at || data.generated_on || "1");
-    return `${url}?v=${version}`;
+    return "";
   }
   return url;
+}
+
+function visualSeed(value) {
+  return Array.from(String(value || "Open Source Game")).reduce(
+    (seed, char) => (seed * 31 + char.charCodeAt(0)) % 360,
+    17
+  );
+}
+
+function gameInitials(title) {
+  const chars = Array.from(String(title || "OSG")).filter((char) =>
+    /[\p{L}\p{N}]/u.test(char)
+  );
+  return chars.slice(0, 2).join("").toUpperCase() || "OS";
+}
+
+function generatedVisual(game, sizeClass) {
+  const hue = visualSeed(game.slug || game.title);
+  const style = `--visual-hue:${hue}`;
+  const label = game.genres?.[0] || "OSS";
+  return `
+    <div class="${sizeClass} generated-visual" style="${escapeHtml(style)}" aria-hidden="true">
+      <span>${escapeHtml(gameInitials(game.title))}</span>
+      <small>${escapeHtml(label)}</small>
+    </div>
+  `;
+}
+
+function gameImage(game, sizeClass, alt = "") {
+  const src = imageSrc(game.reference_image_url || "");
+  if (!src) {
+    return generatedVisual(game, sizeClass);
+  }
+  return `<img class="${sizeClass}" src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" onerror="this.hidden=true">`;
 }
 
 function pill(value) {
@@ -211,9 +244,7 @@ function renderGameCard(game) {
     .join("");
   const stars = starsLabel(game.stars);
   const license = game.code_license || "ライセンス不明";
-  const thumbnail = game.reference_image_url
-    ? `<img class="card-thumb" src="${escapeHtml(imageSrc(game.reference_image_url))}" alt="" loading="lazy" onerror="this.hidden=true">`
-    : "";
+  const thumbnail = gameImage(game, "card-thumb");
   return `
     <button class="game-card ${
       state.selectedSlug === game.slug ? "active" : ""
@@ -274,9 +305,7 @@ function renderDetail(game) {
   els.detailView.innerHTML = `
     <div class="detail-title">
       ${
-        game.reference_image_url
-          ? `<img class="detail-image" src="${escapeHtml(imageSrc(game.reference_image_url))}" alt="${escapeHtml(game.title)} 参考画像" loading="lazy" onerror="this.hidden=true">`
-          : ""
+        gameImage(game, "detail-image", `${game.title} 参考画像`)
       }
       <h2>${escapeHtml(game.title)}</h2>
       <div class="meta-line">
@@ -295,7 +324,7 @@ function renderDetail(game) {
         <dt>言語</dt><dd>${game.languages.map((item) => pill(item.name)).join(" ") || "未登録"}</dd>
         <dt>作者・コミュニティ</dt><dd>${escapeHtml(game.author_community || "未登録")}</dd>
         <dt>初版年</dt><dd>${escapeHtml(game.release_year || "未登録")}</dd>
-        <dt>参考画像URL</dt><dd>${externalLink(game.reference_image_url, game.reference_image_url) || "未登録"}</dd>
+        <dt>参考画像URL</dt><dd>${externalLink(imageSrc(game.reference_image_url || ""), game.reference_image_url) || "未登録"}</dd>
       </dl>
     </section>
 
