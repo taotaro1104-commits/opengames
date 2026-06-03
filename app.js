@@ -1,5 +1,7 @@
+const urlParams = new URLSearchParams(window.location.search);
+
 const state = {
-  query: "",
+  query: urlParams.get("q") || "",
   genre: "",
   platform: "",
   language: "",
@@ -9,7 +11,7 @@ const state = {
   personalOnly: false,
   japaneseOnly: false,
   repoOnly: false,
-  selectedSlug: null,
+  selectedSlug: urlParams.get("slug") || urlParams.get("game") || null,
 };
 
 const data = window.OPEN_SOURCE_GAMES_DATA || { games: [] };
@@ -44,6 +46,7 @@ const els = {
   licenseFilter: document.getElementById("licenseFilter"),
   statusFilter: document.getElementById("statusFilter"),
   sortSelect: document.getElementById("sortSelect"),
+  filterPanel: document.getElementById("filterPanel"),
   personalOnly: document.getElementById("personalOnly"),
   japaneseOnly: document.getElementById("japaneseOnly"),
   repoOnly: document.getElementById("repoOnly"),
@@ -236,6 +239,10 @@ function statusLabel(status) {
   )}</span>`;
 }
 
+function matchesGameSlug(game, slug) {
+  return game.slug === slug || game.page_slug === slug;
+}
+
 function renderGameCard(game) {
   const genres = game.genres.slice(0, 3).map(pill).join("");
   const languages = game.languages
@@ -247,7 +254,7 @@ function renderGameCard(game) {
   const thumbnail = gameImage(game, "card-thumb");
   return `
     <button class="game-card ${
-      state.selectedSlug === game.slug ? "active" : ""
+      matchesGameSlug(game, state.selectedSlug) ? "active" : ""
     }" type="button" data-slug="${escapeHtml(game.slug)}">
       <div class="card-head">
         ${thumbnail}
@@ -275,10 +282,10 @@ function renderList(items) {
     return;
   }
   els.gameList.innerHTML = items.map(renderGameCard).join("");
-  if (!state.selectedSlug || !items.some((game) => game.slug === state.selectedSlug)) {
+  if (!state.selectedSlug || !items.some((game) => matchesGameSlug(game, state.selectedSlug))) {
     state.selectedSlug = items[0].slug;
   }
-  renderDetail(items.find((game) => game.slug === state.selectedSlug));
+  renderDetail(items.find((game) => matchesGameSlug(game, state.selectedSlug)));
 }
 
 function renderLinks(items, labelKey = "name") {
@@ -385,10 +392,18 @@ function updateFromControls() {
   state.personalOnly = els.personalOnly.checked;
   state.japaneseOnly = els.japaneseOnly.checked;
   state.repoOnly = els.repoOnly.checked;
+  const url = new URL(window.location.href);
+  if (state.query) {
+    url.searchParams.set("q", state.query);
+  } else {
+    url.searchParams.delete("q");
+  }
+  window.history.replaceState({}, "", url);
   render();
 }
 
 function init() {
+  els.searchInput.value = state.query;
   els.dbMeta.textContent = `${games.length.toLocaleString()}件 / 生成日 ${data.generated_on || "不明"}`;
   els.totalCount.textContent = games.length.toLocaleString();
   els.activeCount.textContent = games
@@ -450,8 +465,20 @@ function init() {
       return;
     }
     state.selectedSlug = card.dataset.slug;
+    if (window.location.pathname.endsWith("/game.html")) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("slug", state.selectedSlug);
+      window.history.replaceState({}, "", url);
+    }
     render();
+    if (window.matchMedia("(max-width: 680px)").matches) {
+      els.detailView.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
   });
+
+  if (window.matchMedia("(max-width: 680px)").matches) {
+    els.filterPanel.open = Boolean(state.query);
+  }
 
   render();
 }

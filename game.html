@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>オープンソースゲーム詳細 | Open Source Games DB</title>
+  <meta name="description" content="オープンソースゲームの概要、ジャンル、対応プラットフォーム、ライセンス、リポジトリ、公式サイトを確認できます。">
+  <link rel="canonical" href="https://opengames.newlife-startup.com/game.html">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Open Source Games DB">
+  <meta property="og:title" content="オープンソースゲーム詳細 | Open Source Games DB">
+  <meta property="og:description" content="オープンソースゲームの概要、ジャンル、対応プラットフォーム、ライセンス、リポジトリ、公式サイトを確認できます。">
+  <meta property="og:url" content="https://opengames.newlife-startup.com/game.html">
+  <meta property="og:image" content="https://opengames.newlife-startup.com/ogp.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="オープンソースゲーム詳細 | Open Source Games DB">
+  <meta name="twitter:description" content="オープンソースゲームの概要、ジャンル、対応プラットフォーム、ライセンス、リポジトリ、公式サイトを確認できます。">
+  <meta name="twitter:image" content="https://opengames.newlife-startup.com/ogp.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"オープンソースゲーム詳細","description":"オープンソースゲームの概要、ジャンル、対応プラットフォーム、ライセンス、リポジトリ、公式サイトを確認できます。","url":"https://opengames.newlife-startup.com/game.html"}</script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="static-page">
+  
+  
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="検索条件">
+      <div class="brand">
+        <div class="brand-mark">OS</div>
+        <div>
+          <h1>Open Source Games DB</h1>
+          <p id="dbMeta">データベース読み込み中</p>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>検索</span>
+        <input id="searchInput" type="search" autocomplete="off" placeholder="タイトル、説明、言語、ライセンス">
+      </label>
+
+      <details id="filterPanel" class="filter-panel" open>
+        <summary>絞り込み</summary>
+        <div class="filter-grid">
+          <label class="field"><span>ジャンル</span><select id="genreFilter"></select></label>
+          <label class="field"><span>プラットフォーム</span><select id="platformFilter"></select></label>
+          <label class="field"><span>言語</span><select id="languageFilter"></select></label>
+          <label class="field"><span>ライセンス</span><select id="licenseFilter"></select></label>
+          <label class="field">
+            <span>状態</span>
+            <select id="statusFilter">
+              <option value="">すべて</option>
+              <option value="active">更新中</option>
+              <option value="stale">停滞気味</option>
+              <option value="abandoned">放棄</option>
+              <option value="unknown">不明</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>並び順</span>
+            <select id="sortSelect">
+              <option value="stars">スター数</option>
+              <option value="title">タイトル</option>
+              <option value="recent">最新コミット</option>
+              <option value="license">ライセンス</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="toggles">
+          <label><input id="japaneseOnly" type="checkbox"> 日本語情報源あり</label>
+          <label><input id="personalOnly" type="checkbox"> 個人・小規模サイトあり</label>
+          <label><input id="repoOnly" type="checkbox"> リポジトリあり</label>
+        </div>
+
+        <button id="resetButton" class="button" type="button">条件をリセット</button>
+      </details>
+    </aside>
+
+    <main class="main">
+      <section class="seo-overview" aria-labelledby="seoHeading">
+        <div>
+          <p class="eyebrow">Open Source Games DB</p>
+          <h2 id="seoHeading">オープンソースゲームを日本語で探せる検索・比較データベース</h2>
+          <p>PC、Web、Linux、macOS、Windowsで遊べるオープンソースゲームを、ジャンル、ライセンス、開発言語、リポジトリ情報から比較できます。</p>
+        </div>
+        <div class="seo-links" aria-label="主要ページ">
+          <a href="/games.html">全ゲーム一覧</a>
+          <a href="/game.html?slug=0ad">0 A.D.</a>
+          <a href="/game.html?slug=openttd">OpenTTD</a>
+          <a href="/game.html?slug=wesnoth">The Battle for Wesnoth</a>
+          <a href="/game.html?slug=supertux">SuperTux</a>
+          <a href="/game.html?slug=cataclysm-dda">Cataclysm: Dark Days Ahead</a>
+        </div>
+      </section>
+
+      <section class="stats" aria-label="集計">
+        <div><span id="visibleCount">0</span><small>表示中</small></div>
+        <div><span id="totalCount">0</span><small>登録総数</small></div>
+        <div><span id="activeCount">0</span><small>更新中</small></div>
+        <div><span id="personalCount">0</span><small>個人サイト</small></div>
+        <div><span id="japaneseCount">0</span><small>日本語情報源</small></div>
+      </section>
+
+      <section class="content-grid">
+        <div class="results-panel">
+          <div class="panel-bar">
+            <h2>ゲーム一覧</h2>
+            <span id="resultSummary"></span>
+          </div>
+          <div id="gameList" class="game-list" aria-live="polite"></div>
+        </div>
+
+        <aside class="detail-panel" aria-label="詳細">
+          <div id="detailEmpty" class="detail-empty">一覧からゲームを選択してください</div>
+          <article id="detailView" class="detail-view" hidden></article>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="/data.js"></script>
+  <script src="/app.js"></script>
+
+
+</body>
+</html>
