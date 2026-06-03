@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open Source Games DB</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="検索条件">
+      <div class="brand">
+        <div class="brand-mark">OS</div>
+        <div>
+          <h1>Open Source Games DB</h1>
+          <p id="dbMeta">データベース読み込み中</p>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>検索</span>
+        <input id="searchInput" type="search" autocomplete="off" placeholder="タイトル、説明、言語、ライセンス">
+      </label>
+
+      <div class="filter-grid">
+        <label class="field">
+          <span>ジャンル</span>
+          <select id="genreFilter"></select>
+        </label>
+        <label class="field">
+          <span>プラットフォーム</span>
+          <select id="platformFilter"></select>
+        </label>
+        <label class="field">
+          <span>言語</span>
+          <select id="languageFilter"></select>
+        </label>
+        <label class="field">
+          <span>ライセンス</span>
+          <select id="licenseFilter"></select>
+        </label>
+        <label class="field">
+          <span>状態</span>
+          <select id="statusFilter">
+            <option value="">すべて</option>
+            <option value="active">更新中</option>
+            <option value="stale">停滞気味</option>
+            <option value="abandoned">放棄</option>
+            <option value="unknown">不明</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>並び順</span>
+          <select id="sortSelect">
+            <option value="stars">スター数</option>
+            <option value="title">タイトル</option>
+            <option value="recent">最新コミット</option>
+            <option value="license">ライセンス</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="toggles">
+        <label><input id="japaneseOnly" type="checkbox"> 日本語情報源あり</label>
+        <label><input id="personalOnly" type="checkbox"> 個人・小規模サイトあり</label>
+        <label><input id="repoOnly" type="checkbox"> リポジトリあり</label>
+      </div>
+
+      <button id="resetButton" class="button" type="button">条件をリセット</button>
+    </aside>
+
+    <main class="main">
+      <section class="stats" aria-label="集計">
+        <div>
+          <span id="visibleCount">0</span>
+          <small>表示中</small>
+        </div>
+        <div>
+          <span id="totalCount">0</span>
+          <small>登録総数</small>
+        </div>
+        <div>
+          <span id="activeCount">0</span>
+          <small>更新中</small>
+        </div>
+        <div>
+          <span id="personalCount">0</span>
+          <small>個人サイト</small>
+        </div>
+        <div>
+          <span id="japaneseCount">0</span>
+          <small>日本語情報源</small>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <div class="results-panel">
+          <div class="panel-bar">
+            <h2>ゲーム一覧</h2>
+            <span id="resultSummary"></span>
+          </div>
+          <div id="gameList" class="game-list" aria-live="polite"></div>
+        </div>
+
+        <aside class="detail-panel" aria-label="詳細">
+          <div id="detailEmpty" class="detail-empty">一覧からゲームを選択してください</div>
+          <article id="detailView" class="detail-view" hidden></article>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
